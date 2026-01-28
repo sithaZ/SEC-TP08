@@ -1,0 +1,34 @@
+version: '3.8'
+
+services:
+  # Service 1: Custom Java Web App
+  bank-web:
+    build: ./app                      # Build the Dockerfile in the app/ folder
+    ports:
+      - "8080:8080"                   # Map Host 8080 -> Container 8080
+    networks:
+      - bank-net                      # Custom Network
+    depends_on:
+      - mysql-db
+
+  # Service 2: Database (MySQL)
+  mysql-db:
+    image: mysql:8.0                  # Official Image
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: bankdb
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+    networks:
+      - bank-net
+    volumes:
+      - bank_data:/var/lib/mysql      
+
+# Custom Network
+networks:
+  bank-net:
+    driver: bridge
+
+# Persistent Volume
+volumes:
+  bank_data:
